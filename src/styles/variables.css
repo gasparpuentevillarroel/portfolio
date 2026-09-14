@@ -1,0 +1,21 @@
+:root {
+  /* Fondos */
+  --bg-primary: #f5ebd9;
+  --bg-surface: #ede3ce;
+
+  /* Verde principal (tu base) */
+  --brand-green: #29702c;
+  --brand-green-hover: #194a1c;
+
+  /* Acentos complementarios de la misma gama */
+  --accent-red: #a83d31;        /* Rojo ladrillo mate */
+  --accent-wine: #6e262a;       /* Bordó sobrio */
+  --accent-ochre: #c98a2c;      /* Mostaza / ámbar */
+  --accent-slate: #344c5c;      /* Azul pizarra desaturado */
+
+  /* Textos y bordes */
+  --text-primary: #1c1a17;
+  --text-second:#ebe38d;
+  --text-muted: #5c564c;
+  --border-subtle: #dacdb5;
+}

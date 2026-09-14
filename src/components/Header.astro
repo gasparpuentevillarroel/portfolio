@@ -1,0 +1,361 @@
+---
+const navItems = [
+  { name: 'Inicio', href: '#hero', color: '#29702c' },
+  { name: 'Sobre mí', href: '#aboutMe', color: '#c98a2c' },
+  { name: 'Proyectos', href: '#proyects', color: '#6e262a' },
+  { name: 'Contacto', href: '#contact', color: '#344c5c' },
+];
+---
+
+<header class="header">
+  <div class="header-container">
+    <!-- Logotipo sutil para la cabecera en mobile -->
+    <a href="#hero" class="mobile-logo">Gasp<span>o</span></a>
+
+    <!-- Botón hamburguesa de 2 líneas -->
+    <button 
+      class="menu-toggle" 
+      id="menuToggle" 
+      aria-label="Abrir menú" 
+      aria-expanded="false"
+      aria-controls="navLinks"
+    >
+      <span class="line line-1"></span>
+      <span class="line line-2"></span>
+    </button>
+
+    <!-- Contenedor de enlaces -->
+    <nav class="nav-links" id="navLinks" aria-label="Navegación principal">
+      <!-- Pastilla flotante animada (Desktop) -->
+      <div class="pill-indicator" id="pillIndicator" aria-hidden="true"></div>
+
+      {
+        navItems.map((item, index) => (
+          <a
+            href={item.href}
+            class:list={['nav-link', { active: index === 0 }]}
+            data-target={item.href.replace('#', '')}
+            data-color={item.color}
+          >
+            {item.name}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const navContainer = document.querySelector<HTMLElement>('.nav-links');
+  const indicator = document.getElementById('pillIndicator');
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+  const sections = document.querySelectorAll<HTMLElement>('section[id], header[id], div[id]');
+  const menuToggle = document.getElementById('menuToggle');
+
+  let currentActiveLink: HTMLAnchorElement | null = document.querySelector('.nav-link.active');
+
+  // --- 1. Pastilla flotante (Desktop) ---
+  const movePill = (el: HTMLAnchorElement | null) => {
+    if (!el || !indicator || !navContainer || window.innerWidth <= 768) return;
+    const containerRect = navContainer.getBoundingClientRect();
+    const targetRect = el.getBoundingClientRect();
+
+    const left = targetRect.left - containerRect.left;
+    const width = targetRect.width;
+    const height = targetRect.height;
+    const color = el.dataset.color || '#29702c';
+
+    indicator.style.width = `${width}px`;
+    indicator.style.height = `${height}px`;
+    indicator.style.transform = `translateX(${left}px)`;
+    indicator.style.backgroundColor = color;
+    indicator.style.opacity = '1';
+  };
+
+  const setActive = (targetId: string) => {
+    navLinks.forEach((link) => {
+      const isMatch = link.dataset.target === targetId;
+      link.classList.toggle('active', isMatch);
+      if (isMatch) {
+        currentActiveLink = link;
+        movePill(link);
+      }
+    });
+  };
+
+  navLinks.forEach((link) => {
+    link.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(hover: hover)').matches && window.innerWidth > 768) {
+        movePill(link);
+      }
+    });
+
+    link.addEventListener('click', () => {
+      if (link.dataset.target) setActive(link.dataset.target);
+      // Cierra el menú al hacer tap en mobile
+      if (window.innerWidth <= 768) {
+        closeMobileMenu();
+      }
+    });
+  });
+
+  navContainer?.addEventListener('mouseleave', () => {
+    if (window.matchMedia('(hover: hover)').matches && window.innerWidth > 768) {
+      if (currentActiveLink) movePill(currentActiveLink);
+    }
+  });
+
+  // --- 2. Menú hamburguesa (Mobile) ---
+  const toggleMobileMenu = () => {
+    const isExpanded = menuToggle?.getAttribute('aria-expanded') === 'true';
+    if (isExpanded) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  };
+
+  const openMobileMenu = () => {
+    menuToggle?.setAttribute('aria-expanded', 'true');
+    menuToggle?.classList.add('is-open');
+    navContainer?.classList.add('is-open');
+    document.body.style.overflow = 'hidden'; // Evita scroll de fondo al estar abierto
+  };
+
+  const closeMobileMenu = () => {
+    menuToggle?.setAttribute('aria-expanded', 'false');
+    menuToggle?.classList.remove('is-open');
+    navContainer?.classList.remove('is-open');
+    document.body.style.overflow = '';
+  };
+
+  menuToggle?.addEventListener('click', toggleMobileMenu);
+
+  // --- 3. Observer de scroll ---
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActive(entry.target.id);
+        }
+      });
+    },
+    { rootMargin: '-30% 0px -60% 0px', threshold: 0 }
+  );
+
+  sections.forEach((section) => {
+    const id = section.getAttribute('id');
+    const isTracked = Array.from(navLinks).some((link) => link.dataset.target === id);
+    if (isTracked) observer.observe(section);
+  });
+
+  // Reubicación de pastilla
+  const updatePosition = () => {
+    if (window.innerWidth > 768) {
+      movePill(currentActiveLink);
+    } else if (indicator) {
+      indicator.style.opacity = '0';
+    }
+  };
+
+  window.addEventListener('load', updatePosition);
+  window.addEventListener('resize', updatePosition);
+  if ('fonts' in document) {
+    document.fonts.ready.then(updatePosition);
+  }
+  updatePosition();
+</script>
+
+<style>
+  .header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-sizing: border-box;
+    background-color: rgba(245, 235, 217, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(218, 205, 181, 0.4);
+  }
+
+  .header-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.5rem;
+    position: relative;
+  }
+
+  /* Logo en header solo visible en mobile */
+  .mobile-logo {
+    display: none;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary, #1c1a17);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .mobile-logo span {
+    color: var(--brand-green, #29702c);
+  }
+
+  /* Contenedor de links (Desktop) */
+  .nav-links {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  /* Pastilla */
+  .pill-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: 
+      transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+      width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+      background-color 0.35s ease,
+      opacity 0.2s ease;
+  }
+
+  .nav-link {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted, #5c564c);
+    text-decoration: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    transition: color 0.25s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-link.active {
+    color: #ffffff;
+  }
+
+  @media (hover: hover) {
+    .nav-links:has(.nav-link:hover) .nav-link.active {
+      color: var(--text-muted, #5c564c);
+    }
+    .nav-link:hover {
+      color: #ffffff !important;
+    }
+  }
+
+  /* Botón hamburguesa oculto en desktop */
+  .menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 42px;
+    height: 42px;
+    position: relative;
+    z-index: 110;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .line {
+    position: absolute;
+    left: 9px;
+    width: 24px;
+    height: 2px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), top 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .line-1 {
+    top: 15px;
+  }
+
+  .line-2 {
+    top: 25px;
+  }
+
+  /* --- Transición a Cruz (X) --- */
+  .menu-toggle.is-open .line-1 {
+    top: 20px;
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle.is-open .line-2 {
+    top: 20px;
+    transform: rotate(-45deg);
+  }
+
+  /* --- Mobile Layout (<= 768px) --- */
+  @media (max-width: 768px) {
+    .header-container {
+      justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+    }
+
+    .mobile-logo {
+      display: block;
+    }
+
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pill-indicator {
+      display: none;
+    }
+
+    /* Menú desplegable a pantalla completa */
+    .nav-links {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #a83d31;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.75rem;
+      z-index: 105;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-links.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .nav-link {
+      font-size: 1.85rem;
+      font-weight: 600;
+      color:  #dfd5c4;
+      padding: 0.5rem 1.5rem;
+    }
+
+    .nav-link.active {
+      color: #f5eb78;
+      background: transparent;
+    }
+  }
+</style>

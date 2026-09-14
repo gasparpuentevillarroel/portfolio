@@ -1,0 +1,314 @@
+---
+import Button from './Button.astro';
+
+// Separamos el título en palabras para la animación
+const titleWords = ['Sobre', 'mí'];
+---
+
+<section id="aboutMe">
+  <div class="center-container">
+    
+    <!-- Fila superior: En mobile une la 'o' y el título uno al lado del otro -->
+    <div class="header-title-row">
+      <div class="letter-anchor">
+        <div class="container second">
+          <div class="marker"></div>
+        </div>
+      </div>
+      
+      <!-- Título animado por palabra -->
+      <h2 class="title title-reveal">
+        {titleWords.map((word, index) => (
+          <span class="word-wrapper">
+            <span class="word" style={`transition-delay: ${index * 0.1}s;`}>{word}</span>
+          </span>
+        ))}
+      </h2>
+    </div>
+
+    <!-- Bloque de texto alineado a la izquierda -->
+    <div class="about-text-block anim-fade-in">
+      <div class="bio">
+        <p>
+          <strong>Soy Gaspar</strong>, desarrollador full stack desde Mar del Plata y estudiante de <strong>Ingeniería en Sistemas en CAECE</strong>. 
+          Me dedico a crear software web de extremo a extremo, con la meta de enfocar mi camino profesional en el 
+          ecosistema de la <strong>inteligencia artificial</strong> y las herramientas que se construyen sobre ella.
+        </p>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="actions">
+        <Button
+          text="Copiar correo"
+          variant="outline"
+          copyText="gasparpuentevillarroel2006@gmail.com"
+        >
+          <svg slot="icon-left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+        </Button>
+
+        <Button
+          text="Descargar CV"
+          variant="ochre"
+          href="/cv.pdf"
+          download="CV-Gaspar-Puente.pdf"
+        >
+          <svg slot="icon-left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" x2="12" y1="15" y2="3"/>
+          </svg>
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Observador para activar las animaciones al scrollear
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target); // Solo se anima la primera vez
+      }
+    });
+  }, { 
+    threshold: 0.3, // Se activa cuando el 30% del elemento es visible
+    rootMargin: '0px 0px -50px 0px' 
+  });
+
+  // Animación del título
+  const titleReveal = document.querySelector('.title-reveal');
+  if (titleReveal) observer.observe(titleReveal);
+
+  // Animación suave para el bloque de texto y botones
+  const textBlock = document.querySelector('.anim-fade-in');
+  if (textBlock) observer.observe(textBlock);
+</script>
+
+<style>
+  section {
+    min-height: 100vh;
+    padding: 3rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: 4rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .center-container {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-title-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Desktop: la "o" flota fuera del texto hacia la izquierda */
+  .letter-anchor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: calc(100% + 3rem);
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 2rem;
+    color: #c98a2c;
+  }
+
+  .container.second {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .marker {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+  }
+
+  /* =========================================
+     ANIMACIÓN DEL TÍTULO (SLIDE UP BY WORD)
+     ========================================= */
+  .title {
+    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--accent-ochre, #c98a2c);
+    margin: 0;
+    /* Usamos flex para el gap entre palabras con el overflow hidden */
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.25em;
+  }
+
+  .word-wrapper {
+    display: inline-block;
+    overflow: hidden;
+    /* Ajuste para que no corten las letras con descendentes (g, p, y) */
+    padding-bottom: 0.1em;
+    margin-bottom: -0.1em;
+  }
+
+  .word {
+    display: inline-block;
+    transform: translateY(110%);
+    /* Curva estilo Apple para el slide up */
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Estado activado por JS */
+  .title-reveal.is-visible .word {
+    transform: translateY(0);
+  }
+  /* ========================================= */
+
+  .about-text-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  /* Fade in suave para el texto y botones tras el título */
+  .anim-fade-in {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition-delay: 0.4s; /* Espera a que el título casi termine */
+  }
+
+  .anim-fade-in.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    line-height: 1.6;
+    color: var(--text-primary, #1c1a17);
+  }
+
+  .bio strong {
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Tablets */
+  @media (max-width: 1024px) {
+    .center-container {
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: 2rem;
+    }
+
+    .letter-anchor {
+      right: calc(100% + 1.5rem);
+      width: 120px;
+      height: 120px;
+    }
+
+    .marker {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  /* Móviles (< 768px) */
+  @media (max-width: 768px) {
+    section {
+      min-height: auto;
+      padding: 3.5rem 2rem 7rem; 
+    }
+
+    .center-container {
+      max-width: 100%;
+      margin: 0;
+      align-items: flex-start;
+    }
+
+    .header-title-row {
+      width: 100%;
+      flex-direction: row;
+      justify-content: flex-start;
+      /* Gap alineado con Proyectos mobile */
+      gap: 1.15rem; 
+      margin-bottom: 1.5rem;
+    }
+
+    .letter-anchor {
+      position: relative;
+      /* Mantenemos tu calibración vertical */
+      top: -2.5rem; 
+      right: auto;
+      transform: none;
+      width: 44px;  
+      height: 44px;
+      flex-shrink: 0;
+      padding-right: 0; /* Reset padding desktop */
+    }
+
+    .marker {
+      width: 44px;
+      height: 44px;
+    }
+
+    .about-text-block {
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .bio {
+      text-align: left;
+    }
+
+    .actions {
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  }
+
+  /* Pantallas muy compactas */
+  @media (max-width: 420px) {
+    section {
+      padding: 3rem 1.25rem 6rem;
+    }
+
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

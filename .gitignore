@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Astro build output and generated files
+.astro/
+dist/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+
+# Logs and debug files
+*.log
+logs/
+debug.log
+error.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor and IDE files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+
+# Local tooling caches
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

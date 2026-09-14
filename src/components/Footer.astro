@@ -1,0 +1,143 @@
+---
+const currentYear = new Date().getFullYear();
+
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <!-- Identidad y copyright -->
+    <div class="footer-left">
+      <span class="footer-logo">Gasp<span class="highlight-o">o</span></span>
+      <p class="copyright">© {currentYear} — Todos los derechos reservados.</p>
+    </div>
+
+    <!-- Botón Volver arriba -->
+    <div class="footer-right">
+      <a href="#hero" class="back-to-top" aria-label="Volver al inicio">
+        <span>Arriba</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m18 15-6-6-6 6" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    width: 100%;
+    padding: 3.5rem 1.5rem;
+    background-color: var(--accent-wine, #6e262a);
+    border-top: 1px solid rgba(251, 247, 240, 0.12);
+    color: #faf7f2;
+    box-sizing: border-box;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  /* Marca */
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .footer-logo {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #faf7f2;
+  }
+
+  /* La 'o' destacada con tu amarillo lima */
+  .highlight-o {
+    color: #f5eb78;
+    display: inline-block;
+  }
+
+  .copyright {
+    font-size: 0.85rem;
+    color: #d5cab7;
+    margin: 0;
+  }
+
+  /* Enlaces centrales */
+  .footer-center {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .social-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #d5cab7;
+    text-decoration: none;
+    position: relative;
+    padding: 0.25rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .social-link:hover {
+    color: var(--hover-color, #f5eb78);
+  }
+
+  /* Botón subir estilizado sobre fondo oscuro */
+  .footer-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #faf7f2;
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border-radius: 9999px;
+    background-color: rgba(250, 247, 242, 0.08);
+    border: 1px solid rgba(250, 247, 242, 0.2);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .back-to-top:hover {
+    background-color: #faf7f2;
+    border-color: #faf7f2;
+    color: var(--accent-wine, #6e262a);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 680px) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2rem;
+    }
+
+    .footer-center {
+      gap: 1.25rem;
+    }
+  }
+</style>

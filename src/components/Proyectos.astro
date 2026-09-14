@@ -1,0 +1,222 @@
+---
+import ProjectCard from './ProjectCard.astro';
+
+// 1. Separamos el título en palabras
+const titleWords = ['Proyectos', '&', 'experiencia'];
+---
+
+<section id="proyects">
+  <div class="projects-layout">
+    <!-- 1. Columna de contenido a la izquierda -->
+    <div class="projects-content">
+      
+      <!-- 2. Título animado por palabra -->
+      <h2 class="title title-reveal">
+        {titleWords.map((word, index) => (
+          <span class="word-wrapper">
+            <span class="word" style={`transition-delay: ${index * 0.15}s;`}>{word}</span>
+          </span>
+        ))}
+      </h2>
+
+      <div class="projects-grid">
+        <ProjectCard
+          headline="Stockiate - Control total de stock y ventas."
+          summaryBold="Operación en tiempo real."
+          summaryText="Plataforma SaaS desarrollada de extremo a extremo para optimizar inventarios y puntos de venta en comercios reales."
+          imageSrc="/images/project-stockiate.webp"
+          imageAlt="Panel de administración de Stockiate"
+          href="/proyectos/stockiate"
+          techs={['Go', 'Gin', 'JavaScript', 'PostgreSQL', 'Tailwind']}
+        />
+
+        <ProjectCard
+          headline="Nexxos - Presencia digital para debates globales."
+          summaryBold="Landing institucional e informativa."
+          summaryText="Desarrollo web para Nexxos, ONG orientada a transformar la educación a través de simulacros de debate y diplomacia (ONU, OEA y otros organismos), impulsando habilidades prácticas y sociales en estudiantes."
+          imageSrc="/images/project-nexxos.webp"
+          imageAlt="Landing page de Nexxos"
+          href="/proyectos/nexxos"
+          techs={['Astro', 'CSS', 'JavaScript', 'UI/UX', 'Responsive Design']}
+        />
+      </div>
+    </div>
+
+    <!-- 3. Marcador de la "o" anclado a la derecha -->
+    <div class="project-anchor">
+      <div class="container third">
+        <div class="marker"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Observador para activar la animación del título al scrollear
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target); // Se anima solo la primera vez
+      }
+    });
+  }, { 
+    threshold: 0.4, 
+    rootMargin: '0px 0px -50px 0px' 
+  });
+
+  // CAMBIO ACÁ: Le agregamos '#proyects' para que no se confunda con el de 'Sobre mí'
+  const titleReveal = document.querySelector('#proyects .title-reveal');
+  if (titleReveal) {
+    observer.observe(titleReveal);
+  }
+</script>
+
+<style>
+  section {
+    min-height: 100vh;
+    padding: 6rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: 5rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    border-radius: 1.5rem;
+    background-color: var(--accent-wine, #6e262a);
+
+    --text-primary: #f5eb78;
+    --text-muted: #dfd5c4;
+    --brand-green:  #faf18b; 
+  }
+
+  /* Distribución horizontal: Contenido a la izquierda, la 'o' a la derecha */
+  .projects-layout {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8rem;
+  }
+
+  /* Bloque de contenido izquierdo */
+  .projects-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    min-width: 0;
+  }
+
+  /* =========================================
+     ANIMACIÓN DEL TÍTULO (SLIDE UP BY WORD)
+     ========================================= */
+  .title {
+    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0;
+    
+    /* Configuración flex para acomodar las palabras */
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.28em; 
+    row-gap: 0.1em;
+  }
+
+  .word-wrapper {
+    display: inline-block;
+    overflow: hidden;
+    /* Evita que se corten las letras con descendentes (g, p, y) */
+    padding-bottom: 0.15em;
+    margin-bottom: -0.15em; 
+  }
+
+  .word {
+    display: inline-block;
+    transform: translateY(110%);
+    /* Curva de aceleración limpia */
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Clase que inyecta JS */
+  .title-reveal.is-visible .word {
+    transform: translateY(0);
+  }
+  /* ========================================= */
+
+  /* Grilla para que ambas cards queden una al lado de la otra y alineadas */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem;
+    align-items: stretch;
+  }
+
+  /* Slot de la 'o' a la derecha */
+  .project-anchor {
+    flex: 0 0 200px;
+    position: sticky;
+    top: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container.third {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .marker {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+  }
+
+  /* Responsivo */
+  @media (max-width: 1100px) {
+    .projects-layout {
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .project-anchor {
+      position: static;
+      flex: none;
+    }
+
+    .marker {
+      width: 120px;
+      height: 120px;
+    }
+
+    /* Como el título ahora es flex, usamos justify-content en lugar de text-align */
+    .title {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    section {
+      padding: 0rem 2.25rem 5rem 2.25rem;
+      background-color:#f5ebd9 ;
+    }
+    .title{
+        color:#6e262a;      
+    }
+    .projects-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

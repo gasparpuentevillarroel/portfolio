@@ -1,0 +1,115 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Proyectos from '../components/Proyectos.astro';
+import SobreMi from '../components/SobreMiTemp.astro';
+import Contacto from '../components/Contacto.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Gaspo | Portfolio">
+  <main class="main-wrapper">
+    <Hero />
+    <SobreMi />
+    <Proyectos />
+    <Contacto />
+    <Footer />
+  </main>
+</Layout>
+
+<style>
+  .main-wrapper {
+    width: 100%;
+    overflow-x: hidden; /* Evita que los cálculos diagonales de GSAP generen scrollbar horizontal */
+    position: relative;
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { Flip } from "gsap/Flip";
+
+  gsap.registerPlugin(ScrollTrigger, Flip);
+
+  let flipCtx: gsap.Context;
+  let windowWidth = window.innerWidth; // Guardamos el ancho inicial
+
+  const initAnimations = () => {
+    // Si ya existe un contexto activo, lo revertimos limpiamente
+    if (flipCtx) flipCtx.revert();
+
+    flipCtx = gsap.context(() => {
+      // 1. Tomamos los estados de destino de cada sección
+      const secondState = Flip.getState(".second .marker");
+      const thirdState = Flip.getState(".third .marker");
+      const fourthState = Flip.getState(".fourth .marker");
+
+      // 2. Timeline atada al scroll general
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#hero",
+          start: "top top",
+          endTrigger: "#contact",
+          end: "bottom bottom",
+          scrub: 0.5,
+          invalidateOnRefresh: true, 
+        }
+      });
+
+      // 3. Secuencia de paradas y metamorfosis
+
+      // PARADA 1: Viaje hacia "Sobre mí" -> Cuadrado redondeado
+      tl.add(Flip.fit(".box", secondState, { ease: "none", duration: 1 }) as any)
+        .to(".box", { 
+          borderColor: "#c98a2c", 
+          backgroundColor: "#c98a2c", 
+          borderWidth: "0px",         
+          borderRadius: "25%",        
+          rotation: 90,
+          duration: 1, 
+          ease: "none" 
+        }, "<")
+
+      // PARADA 2: Viaje hacia "Proyectos" -> Rombo afilado
+      tl.add(Flip.fit(".box", thirdState, { ease: "none", duration: 1 }) as any, "+=0.3")
+        .to(".box", { 
+          backgroundColor: "#faf18b", 
+          borderRadius: "0%",         
+          rotation: 45,               
+          duration: 1, 
+          ease: "none" 
+        }, "<")
+
+      // PARADA 3: Viaje hacia "Contacto" -> Círculo sólido
+      tl.add(Flip.fit(".box", fourthState, { ease: "none", duration: 1 }) as any, "+=0.3")
+        .to(".box", { 
+          backgroundColor: "#344c5c", 
+          borderRadius: "50%",        
+          rotation: 0, 
+          duration: 1, 
+          ease: "none" 
+        }, "<");
+    });
+  };
+
+  // Inicialización segura
+  window.addEventListener("load", () => {
+    initAnimations();
+    ScrollTrigger.refresh();
+  });
+
+  // Debounce inteligente para redimensionado
+  let resizeTimer: ReturnType<typeof setTimeout>;
+  window.addEventListener("resize", () => {
+    // SOLO recalculamos si cambió el ancho (ignora los saltos de la barra en mobile)
+    if (window.innerWidth !== windowWidth) {
+      windowWidth = window.innerWidth;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        initAnimations();
+        ScrollTrigger.refresh();
+      }, 150);
+    }
+  });
+</script>

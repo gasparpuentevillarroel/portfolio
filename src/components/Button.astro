@@ -1,0 +1,179 @@
+---
+interface Props {
+  text: string;
+  variant?: 'green' | 'ochre' | 'slate' | 'outline';
+  href?: string;
+  download?: boolean | string;
+  copyText?: string;
+  class?: string;
+  target?: string;
+  rel?: string;
+}
+
+const {
+  text,
+  variant = 'slate',
+  href,
+  download,
+  copyText,
+  class: className = '',
+  target,
+  rel,
+} = Astro.props;
+
+const isLink = Boolean(href);
+---
+
+{
+  isLink ? (
+    <a
+      href={href}
+      download={download}
+      target={target}
+      rel={target === '_blank' && !rel ? 'noopener noreferrer' : rel}
+      class={`custom-btn btn-${variant} ${className}`}
+    >
+      <slot name="icon-left" />
+      <span class="btn-text">{text}</span>
+      <slot name="icon-right" />
+    </a>
+  ) : (
+    <button
+      type="button"
+      data-copy={copyText}
+      class={`custom-btn btn-${variant} ${className} ${copyText ? 'copy-trigger' : ''}`}
+    >
+      <slot name="icon-left" />
+      <span class="btn-text">{text}</span>
+      <slot name="icon-right" />
+    </button>
+  )
+}
+
+<script>
+  // 1. Intersection Observer para el efecto "Fade Up" al scrollear
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('fade-in-visible');
+        observer.unobserve(entry.target); // Hace que la animación ocurra solo la primera vez
+      }
+    });
+  }, { 
+    threshold: 0.1, 
+    rootMargin: '0px 0px -20px 0px' 
+  });
+
+  document.querySelectorAll('.custom-btn').forEach((btn) => {
+    observer.observe(btn);
+  });
+
+  // 2. Manejo de la acción de copiar al portapapeles con feedback temporal
+  document.querySelectorAll<HTMLButtonElement>('.copy-trigger').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const textToCopy = button.getAttribute('data-copy');
+      if (!textToCopy) return;
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        const textSpan = button.querySelector('.btn-text');
+        if (textSpan) {
+          const originalText = textSpan.textContent;
+          textSpan.textContent = '¡Copiado!';
+          button.classList.add('copied');
+          
+          setTimeout(() => {
+            textSpan.textContent = originalText;
+            button.classList.remove('copied');
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+    });
+  });
+</script>
+
+<style>
+  .custom-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    /* Transiciones exclusivas para hover/click */
+    transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    border: 1px solid transparent;
+    outline: none;
+    
+    /* Configuración inicial para el Fade Up */
+    opacity: 0;
+  }
+
+  /* Clase inyectada por JS cuando el botón entra en pantalla */
+  .custom-btn.fade-in-visible {
+    animation: fadeUpBtn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Keyframes usando 'translate' para no romper el 'transform: scale' del click */
+  @keyframes fadeUpBtn {
+    from {
+      opacity: 0;
+      translate: 0 15px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  .custom-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* Variantes de color basadas en tu paleta */
+  .btn-green {
+    background-color: var(--brand-green, #29702c);
+    color: #ffffff;
+  }
+  .btn-green:hover {
+    background-color: #215923;
+  }
+
+  .btn-ochre {
+    background-color: var(--accent-ochre, #c98a2c);
+    color: #ffffff;
+  }
+  .btn-ochre:hover {
+    background-color: #b07724;
+  }
+
+  .btn-slate {
+    background-color: var(--accent-slate, #344c5c);
+    color: #ffffff;
+  }
+  .btn-slate:hover {
+    background-color: #263844;
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: var(--text-primary, #1c1a17);
+    border-color: var(--border-subtle, rgba(28, 26, 23, 0.2));
+  }
+  .btn-outline:hover {
+    background-color: rgba(28, 26, 23, 0.05);
+    border-color: var(--text-primary, #1c1a17);
+  }
+
+  .btn-outline.copied {
+    border-color: var(--brand-green, #29702c);
+    color: var(--brand-green, #29702c);
+  }
+</style>

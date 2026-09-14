@@ -1,0 +1,274 @@
+<section id="hero">
+  <div class="hero-content">
+    <h1 class="title">
+      <!-- Letra G (Bordó) y su pelota -->
+      <span class="char-wrapper">
+        <span class="ball color-wine-bg"></span>
+        <span class="char g color-wine">G</span>
+      </span>
+      <!-- Letra a (Pizarra) -->
+      <span class="char a color-slate">a</span>
+      <!-- Letra s (Rojo) -->
+      <span class="char s color-red">s</span>
+      <!-- Letra p (Ocre) -->
+      <span class="char p color-ochre">p</span>
+      <!-- Letra o (Verde - Animación Flip) -->
+      <span class="container initial"><span class="box shape-o"></span></span>
+    </h1>
+    <p class="subtitle">Ingeniero en Sistemas</p>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const tl = gsap.timeline();
+
+    // 0. Estado inicial limpio
+    gsap.set([".char", ".ball", ".initial"], { visibility: "visible", opacity: 0 });
+    gsap.set(".char.g", { opacity: 0 });
+
+    // 1. PELOTA MOCOSA (Letra G): misma trayectoria diagonal que tenías, física gelatinosa del 404
+    tl.fromTo(".ball", 
+      {
+        x: "-50vw",
+        y: -400,
+        scaleX: 0.4,
+        scaleY: 2.2,
+        rotation: -90,
+        opacity: 1
+      },
+      {
+        x: 0,
+        y: 0,
+        scaleX: 0.7,
+        scaleY: 1.3,
+        rotation: 0,
+        duration: 0.7,
+        ease: "power3.in" // Aceleración por gravedad limpia en lugar del rebote elástico viejo
+      }
+    )
+    // 1a. Splat violento contra el piso
+    .to(".ball", {
+      scaleX: 2.3,
+      scaleY: 0.25,
+      duration: 0.12,
+      ease: "power4.out"
+    })
+    // 1b. Oscilación gelatinosa hacia arriba
+    .to(".ball", {
+      scaleX: 0.8,
+      scaleY: 1.3,
+      duration: 0.15,
+      ease: "power2.out"
+    })
+    // 1c. Contracción secundaria
+    .to(".ball", {
+      scaleX: 1.15,
+      scaleY: 0.85,
+      duration: 0.12,
+      ease: "power2.out"
+    })
+    // 1d. Estabilización
+    .to(".ball", {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.18,
+      ease: "back.out(2)"
+    })
+
+    // 1e. Transición fluida / Morfismo simulado:
+    // La pelota se disuelve suavemente creciendo apenas
+    .to(".ball", {
+      opacity: 0,
+      scale: 1.1,
+      filter: "blur(6px)",
+      duration: 0.28,
+      ease: "power2.out"
+    })
+    // La G nace DESDE ADENTRO de la pelota antes de que termine de desaparecer
+    .fromTo(".char.g", 
+      { 
+        scale: 0.85, 
+        opacity: 0,
+        filter: "blur(4px)" 
+      }, 
+      { 
+        scale: 1, 
+        opacity: 1, 
+        filter: "blur(0px)",
+        duration: 0.01, 
+        ease: "power3.out" 
+      },
+      "-=0.22" // Se solapa 0.22s: la G emerge cuando la pelota todavía está visible
+    )
+
+    // 2. LETRA A - Cae elásticamente
+    .fromTo(".char.a",
+      { y: -150, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.3)" },
+      "-=0.2"
+    )
+
+    // 3. LETRA S - Flip 3D desde abajo
+    .fromTo(".char.s",
+      { rotateX: -90, y: 50, opacity: 0 },
+      { rotateX: 0, y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.5)" },
+      "-=0.7"
+    )
+
+    // 4. LETRA P - Balanceo lateral
+    .fromTo(".char.p",
+      { rotateZ: -45, transformOrigin: "bottom left", opacity: 0 },
+      { rotateZ: 0, opacity: 1, duration: 0.6, ease: "back.out(2)" },
+      "-=0.5"
+    )
+
+    // 5. LETRA O - Inflado
+    .fromTo(".initial",
+      { scale: 0, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" },
+      "-=0.4"
+    )
+
+    // 6. SUBTÍTULO
+    .to(".subtitle", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.2");
+  });
+</script>
+<style>
+  section {
+    /* Reducimos la altura mínima al 80% en escritorio para eliminar el vacío inferior */
+    min-height: 80vh;
+    width: 100%;
+    padding: 2rem 1.25rem 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: 5rem;
+    box-sizing: border-box;
+    overflow: visible;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    /* Eliminamos el translateY que descompensaba los espacios */
+  }
+
+  .title {
+    font-size: clamp(6.2rem, 24vw, 20rem);
+    font-weight: 700;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    margin: 0;
+  }
+
+  /* Asignación de paleta */
+  .color-wine { color: var(--accent-wine, #6e262a); }
+  .color-wine-bg { background-color: var(--accent-wine, #6e262a); }
+  .color-slate { color: var(--accent-slate, #344c5c); }
+  .color-red { color: var(--accent-red, #a83d31); }
+  .color-ochre { color: var(--accent-ochre, #c98a2c); }
+  .color-green { color: var(--brand-green, #29702c); }
+
+  .char-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .char {
+    display: inline-block;
+    visibility: hidden;
+  }
+
+  .char.g {
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+  }
+
+  .ball {
+    position: absolute;
+    bottom: 12%;
+    left: 10%;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 46% 54% 63% 37% / 40% 60% 40% 60%;
+    transform-origin: bottom center;
+    visibility: hidden;
+  }
+
+  .initial {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    visibility: hidden;
+  }
+
+  .box {
+    position: relative;
+    z-index: 50;
+    display: inline-block;
+  }
+.box.shape-o {
+    position: relative;
+    z-index: 50;
+    display: inline-block;
+    
+    /* Achicamos el diámetro general (antes 0.64em) */
+    width: 0.58em; 
+    height: 0.58em;
+    
+    /* Usamos 'em' también en el margen para que la separación escale con la letra */
+    margin-left: 0.04em; 
+    
+    /* Afinamos el grosor del trazo para que coincida con el peso 700 de la fuente (antes 0.16em) */
+    border: 0.14em solid var(--brand-green, #29702c);
+    border-radius: 50%;
+    background-color: transparent;
+    
+    /* Al achicar la letra, compensamos apenas la altura para que apoye en el mismo renglón */
+    top: 0.05em;
+    box-sizing: border-box;
+  }
+  .subtitle {
+    font-size: clamp(1.15rem, 3.8vw, 1.75rem);
+    font-weight: 500;
+    color: var(--text-muted, #5c564c);
+    margin-top: 4rem;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  @media (max-width: 640px) {
+    section {
+      /* En mobile cortamos drásticamente el alto para que la siguiente sección empiece antes */
+      min-height: 65vh;
+      min-height: 90dvh;
+      padding-top: 1rem;
+    }
+
+    .subtitle {
+      margin-top: 1.5rem;
+      padding: 0 0.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .box.shape-o {
+      /* Si en escritorio la seguís viendo grande/chica, modificá estos 3 valores: */
+      width: 0.56em; 
+      height: 0.56em;
+      border-width: 0.135em; /* Grosor del trazo en escritorio */
+      top: 0.02em; /* Subir o bajar */
+    }
+  }
+</style>

@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+---
+
+<Layout title="404 — Página no encontrada">
+  <main class="error-page">
+    <div class="error-content">
+      <!-- Número 404 con el '0' como pelota mocosa aplastada -->
+      <h1 class="error-code" aria-label="Error 404">
+        <span class="num char-4-left">4</span>
+        <span class="zero-wrapper">
+          <span class="slime-zero"></span>
+        </span>
+        <span class="num char-4-right">4</span>
+      </h1>
+
+      <div class="message-box">
+        <span class="tag">Error 404</span>
+        <h2 class="headline">Te fuiste de ruta.</h2>
+        <p class="description">
+          La página que estás buscando no existe, fue movida o se disolvió en el camino.
+        </p>
+
+        <!-- Botones funcionales de navegación -->
+        <div class="actions">
+          <Button
+            text="Volver al inicio"
+            variant="green"
+            href="/"
+          >
+            <svg slot="icon-left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </Button>
+
+          <Button
+            text="Regresar"
+            variant="outline"
+            class="btn-go-back"
+          >
+            <svg slot="icon-left" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 19-7-7 7-7"/>
+              <path d="M19 12H5"/>
+            </svg>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { gsap } from 'gsap';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Funcionalidad del botón 'Regresar' al historial previo
+    const backBtn = document.querySelector('.btn-go-back');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = '/';
+        }
+      });
+    }
+
+    // 2. Animación GSAP al cargar
+    const tl = gsap.timeline();
+
+    // Estado inicial
+    gsap.set(['.char-4-left', '.char-4-right'], { y: -80, opacity: 0 });
+    gsap.set('.slime-zero', { y: -500, opacity: 1, scaleX: 0.4, scaleY: 2.2 });
+    gsap.set('.message-box', { y: 25, opacity: 0 });
+
+    // Cae el '0' viscoso a gran velocidad
+    tl.to('.slime-zero', {
+      y: 0,
+      scaleX: 0.7,
+      scaleY: 1.3,
+      duration: 0.65,
+      ease: 'power3.in'
+    })
+    // Splat violento contra el suelo
+    .to('.slime-zero', {
+      scaleX: 2.3,
+      scaleY: 0.25,
+      duration: 0.12,
+      ease: 'power4.out'
+    })
+    // Oscilación gelatinosa
+    .to('.slime-zero', {
+      scaleX: 0.8,
+      scaleY: 1.3,
+      duration: 0.15,
+      ease: 'power2.out'
+    })
+    .to('.slime-zero', {
+      scaleX: 1.15,
+      scaleY: 0.85,
+      duration: 0.12,
+      ease: 'power2.out'
+    })
+    .to('.slime-zero', {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.2,
+      ease: 'back.out(2)'
+    })
+
+    // Caen los dos '4' a los costados
+    .to(['.char-4-left', '.char-4-right'], {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.4)',
+      stagger: 0.1
+    }, '-=0.3')
+
+    // Revelado suave del texto explicativo y botones
+    .to('.message-box', {
+      y: 0,
+      opacity: 1,
+      duration: 0.7,
+      ease: 'power2.out'
+    }, '-=0.2');
+  });
+</script>
+
+<style>
+  .error-page {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    background-color: var(--bg-primary, #f5ebd9);
+    overflow: hidden;
+  }
+
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  /* Tipografía 404 */
+  .error-code {
+    font-size: clamp(6rem, 22vw, 15rem);
+    font-weight: 800;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    margin: 0 0 2rem 0;
+  }
+
+  .char-4-left {
+    color: var(--accent-wine, #6e262a);
+    display: inline-block;
+  }
+
+  .char-4-right {
+    color: var(--accent-slate, #344c5c);
+    display: inline-block;
+  }
+
+  /* Contenedor y pelota del cero */
+  .zero-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0.15em;
+    position: relative;
+  }
+
+  .slime-zero {
+    width: 0.75em;
+    height: 0.75em;
+    background-color: var(--brand-green, #29702c);
+    /* Forma orgánica de gota / masa viscosa */
+    border-radius: 46% 54% 63% 37% / 40% 60% 40% 60%;
+    transform-origin: bottom center;
+    display: inline-block;
+    box-shadow: 0 10px 30px -5px rgba(41, 112, 44, 0.35);
+  }
+
+  /* Bloque de texto */
+  .message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tag {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-ochre, #c98a2c);
+  }
+
+  .headline {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-primary, #1c1a17);
+    margin: 0;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted, #5c564c);
+    max-width: 480px;
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 500px) {
+    .actions {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+</style>

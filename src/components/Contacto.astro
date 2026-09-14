@@ -1,0 +1,105 @@
+---
+import CardContact from './ContactCard.astro';
+---
+
+<section id="contact">
+  <div class="contact-wrapper">
+    <!-- Marcador de la "o" para GSAP Flip -->
+    <div class="contact-anchor">
+      <div class="container fourth">
+        <div class="marker"></div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de contacto -->
+    <div class="card-container">
+      <CardContact />
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    min-height: 100vh;
+    padding: 6rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: 5rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .contact-wrapper {
+    width: 100%;
+    max-width: 1000px; /* Ajustado para centrar mejor el conjunto */
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem; /* Separación clara y fija */
+  }
+
+  /* Contenedor estricto para que la "o" NUNCA se aplaste ni se superponga */
+  .contact-anchor {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0; /* CLAVE: Fuerza a que el ancla respete sus 160px siempre */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container.fourth {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Coincide con las proporciones de las secciones anteriores */
+  .marker {
+    width: 140px; 
+    height: 140px;
+    border-radius: 50%;
+  }
+
+  /* Contenedor de la tarjeta */
+  .card-container {
+    flex: 1;
+    max-width: 680px;
+    min-width: 0; /* Evita desbordamientos de flexbox */
+    display: flex;
+  }
+
+  /* Responsive: Apilamos antes de que falte espacio (960px en lugar de 860px) */
+  @media (max-width: 960px) {
+    .contact-wrapper {
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .contact-anchor {
+      width: 120px;
+      height: 120px;
+    }
+
+    .marker {
+      width: 100px;
+      height: 100px;
+    }
+
+    .card-container {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Ajustes finales para móvil */
+  @media (max-width: 640px) {
+    section {
+      padding: 4rem 1.25rem;
+    }
+  }
+</style>

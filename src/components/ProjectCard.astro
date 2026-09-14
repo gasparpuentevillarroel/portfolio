@@ -1,0 +1,250 @@
+---
+interface Props {
+  headline: string;
+  summaryBold: string;
+  summaryText: string;
+  imageSrc: string;
+  imageAlt: string;
+  href: string;
+  techs?: string[];
+}
+
+const {
+  headline,
+  summaryBold,
+  summaryText,
+  imageSrc,
+  imageAlt,
+  href,
+  techs = []
+} = Astro.props;
+---
+
+<a href={href} class="apple-card">
+  <header class="card-header">
+    <h3 class="headline">{headline}</h3>
+  </header>
+  
+  <div class="media-frame">
+    <img src={imageSrc} alt={imageAlt} loading="lazy" />
+  </div>
+
+  <footer class="card-footer">
+    <p class="description">
+      <strong>{summaryBold}</strong> {summaryText}
+    </p>
+
+    <div class="meta-row">
+      {techs.length > 0 && (
+        <div class="tech-pills">
+          {techs.map((t: string) => <span>{t}</span>)}
+        </div>
+      )}
+      <span class="cta-link">
+        Ver caso
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </span>
+    </div>
+  </footer>
+</a>
+
+<script>
+  // Observador para activar las animaciones al scrollear
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target); // Solo se anima la primera vez
+      }
+    });
+  }, { 
+    threshold: 0.2, // Se activa cuando el 20% de la tarjeta es visible
+    rootMargin: '0px 0px -50px 0px' 
+  });
+
+  document.querySelectorAll('.apple-card').forEach((card) => {
+    observer.observe(card);
+  });
+</script>
+
+<style>
+  .apple-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    height: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 8rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .headline {
+    font-size: clamp(1.6rem, 3.2vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: #f3eca4;
+    margin: 0;
+  }
+
+  /* IMAGEN: Estado inicial (invisible y desplazada a la izquierda) */
+  .media-frame {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 28px;
+    overflow: hidden;
+    background-color: #11100e;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    opacity: 0;
+  }
+
+  .media-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .apple-card:hover .media-frame img {
+    transform: scale(1.025);
+  }
+
+  .card-footer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: 1.5rem;
+  }
+
+  .description {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--text-muted, #5c564c);
+    margin: 0;
+    min-height: 5.5rem;
+  }
+
+  .description strong {
+    color: #f3eca4;
+    font-weight: 600;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .tech-pills {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .tech-pills span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(28, 26, 23, 0.06);
+    color: #fff36d;
+    white-space: nowrap;
+  }
+
+  /* BOTÓN VER CASO: Estado inicial (invisible y desplazado hacia abajo) */
+  .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff36d;
+    transition: gap 0.2s ease;
+    white-space: nowrap;
+    margin-left: auto;
+    margin-bottom: 0.3rem;
+    
+    opacity: 0;
+  }
+
+  .apple-card:hover .cta-link {
+    gap: 0.65rem;
+  }
+
+  /* =========================================
+     ANIMACIONES (Se activan con .is-visible)
+     ========================================= */
+  
+  /* Animación de la imagen (Izquierda -> Derecha) de 1s */
+  .apple-card.is-visible .media-frame {
+    animation: fadeLeftRight 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animación del botón (Abajo -> Arriba) de 1s con leve retraso */
+  .apple-card.is-visible .cta-link {
+    animation: fadeBottomTop 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 1s;
+  }
+
+  @keyframes fadeLeftRight {
+    from {
+      opacity: 0;
+      translate: -40px 0;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @keyframes fadeBottomTop {
+    from {
+      opacity: 0;
+      translate: 0 20px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  /* Responsivo */
+  @media (max-width: 900px) {
+    .card-header {
+      height: auto;
+      margin-bottom: 1rem;
+    }
+
+    .description {
+      min-height: 0;
+    }
+    .apple-card{
+      background-color: #6e262a;
+      padding:2.5rem 1.5rem;
+      border-radius: 2.5rem;
+    }
+  }
+</style>
