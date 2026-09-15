@@ -64,7 +64,7 @@ import Footer from '../components/Footer.astro';
         .to(".box", { 
           borderColor: "#c98a2c", 
           backgroundColor: "#c98a2c", 
-          borderWidth: "0px",         
+          borderWidth: "0px",        
           borderRadius: "25%",        
           rotation: 90,
           duration: 1, 
@@ -75,8 +75,8 @@ import Footer from '../components/Footer.astro';
       tl.add(Flip.fit(".box", thirdState, { ease: "none", duration: 1 }) as any, "+=0.3")
         .to(".box", { 
           backgroundColor: "#faf18b", 
-          borderRadius: "0%",         
-          rotation: 45,               
+          borderRadius: "0%",        
+          rotation: 45,              
           duration: 1, 
           ease: "none" 
         }, "<")
@@ -93,10 +93,12 @@ import Footer from '../components/Footer.astro';
     });
   };
 
-  // Inicialización segura
-  window.addEventListener("load", () => {
-    initAnimations();
-    ScrollTrigger.refresh();
+  // Inicialización segura: Esperamos a que termine el Hero y carguen las fuentes
+  window.addEventListener("introTerminada", () => {
+    document.fonts.ready.then(() => {
+      ScrollTrigger.refresh();
+      initAnimations();
+    });
   });
 
   // Debounce inteligente para redimensionado

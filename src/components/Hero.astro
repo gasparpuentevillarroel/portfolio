@@ -133,7 +133,15 @@
     )
 
     // 6. SUBTÍTULO
-    .to(".subtitle", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.2");
+    .to(".subtitle", { 
+      opacity: 1, 
+      y: 0, 
+      duration: 0.8, 
+      ease: "power2.out",
+      onComplete: () => {
+        window.dispatchEvent(new Event("introTerminada"));
+      }
+    }, "-=0.2");
   });
 </script>
 <style>
