@@ -1,4 +1,19 @@
+# 1. Permitir a todos los rastreadores clásicos (Google, Bing, etc.)
 User-agent: *
 Allow: /
 
+# 2. Permitir explícitamente a los bots de IA (GEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# 3. Ruta exacta al mapa del sitio
 Sitemap: https://www.gasparpuente.com/sitemap-index.xml
