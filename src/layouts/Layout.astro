@@ -4,9 +4,43 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  description?: string;
+  image?: string;
 }
 
-const { title = "Gaspo | Portfolio" } = Astro.props;
+const { 
+  title = "Gaspar Puente | Desarrollador Full Stack & Software",
+  description = "Portfolio oficial de Gaspar Puente, Desarrollador Full Stack y estudiante de Ingeniería en Sistemas. Especializado en creación de arquitecturas web escalables, bases de datos y soluciones integradas con Inteligencia Artificial.",
+  image = "/og-image.webp" 
+} = Astro.props;
+
+// Forzamos el dominio oficial para canonicals y OG tags
+const siteURL = 'https://www.gasparpuente.com';
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+
+// Datos estructurados (JSON-LD) para Generative Engine Optimization (GEO). 
+// Esto es lo que leen nativamente los agentes de IA para entender tu perfil.
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Gaspar Puente",
+  "url": siteURL,
+  "jobTitle": "Desarrollador Full Stack",
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Universidad CAECE"
+  },
+  "knowsAbout": [
+    "Software Engineering",
+    "Full Stack Development",
+    "Go",
+    "Python",
+    "JavaScript",
+    "PostgreSQL",
+    "Astro",
+    "Artificial Intelligence"
+  ]
+};
 ---
 
 <!doctype html>
@@ -14,7 +48,36 @@ const { title = "Gaspo | Portfolio" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Título y Canonical -->
     <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- SEO & GEO Básico -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Gaspar Puente Villarroel" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="keywords" content="Gaspar Puente, Desarrollador Full Stack, Ingeniero en Sistemas, Software Engineering, Backend Go, Python, Frontend Astro, React, Inteligencia Artificial, PostgreSQL, Desarrollo Web, Startups" />
+
+    <!-- Open Graph / Redes Sociales -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, siteURL)} />
+    <meta property="profile:first_name" content="Gaspar" />
+    <meta property="profile:last_name" content="Puente" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, siteURL)} />
+
+    <!-- Inyección de Schema para Agentes de IA -->
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body>
     <Header />
