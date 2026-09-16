@@ -174,7 +174,7 @@ const navItems = [
     z-index: 100;
     box-sizing: border-box;
     background-color: rgba(245, 235, 217, 0.75);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(218, 205, 181, 0.4);
   }
@@ -276,7 +276,7 @@ const navItems = [
     left: 9px;
     width: 24px;
     height: 2px;
-    background-color: #ffffff;
+    background-color: #000000;
     border-radius: 2px;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), top 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
@@ -293,11 +293,13 @@ const navItems = [
   .menu-toggle.is-open .line-1 {
     top: 20px;
     transform: rotate(45deg);
+    background-color: #ffffff;
   }
 
   .menu-toggle.is-open .line-2 {
     top: 20px;
     transform: rotate(-45deg);
+    background-color: #ffffff;
   }
 
   /* --- Mobile Layout (<= 768px) --- */
