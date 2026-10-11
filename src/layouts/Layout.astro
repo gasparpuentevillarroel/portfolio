@@ -51,7 +51,7 @@ const schema = {
     
     <!-- Título y Canonical -->
     <title>{title}</title>
-    <link rel="canonical" href={canonicalURL} />
+    <link rel="canonical" href={canonicalURL.href} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- SEO & GEO Básico -->
@@ -62,19 +62,19 @@ const schema = {
 
     <!-- Open Graph / Redes Sociales -->
     <meta property="og:type" content="profile" />
-    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, siteURL)} />
+    <meta property="og:image" content={new URL(image, siteURL).href} />
     <meta property="profile:first_name" content="Gaspar" />
     <meta property="profile:last_name" content="Puente" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:url" content={canonicalURL.href} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, siteURL)} />
+    <meta name="twitter:image" content={new URL(image, siteURL).href} />
 
     <!-- Inyección de Schema para Agentes de IA -->
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
