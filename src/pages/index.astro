@@ -20,7 +20,7 @@ import Footer from '../components/Footer.astro';
 <style>
   .main-wrapper {
     width: 100%;
-    overflow-x: hidden; /* Evita que los cálculos diagonales de GSAP generen scrollbar horizontal */
+    overflow-x: hidden;
     position: relative;
   }
 </style>
@@ -28,72 +28,98 @@ import Footer from '../components/Footer.astro';
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { Flip } from "gsap/Flip";
 
-  gsap.registerPlugin(ScrollTrigger, Flip);
+  gsap.registerPlugin(ScrollTrigger);
 
-  let flipCtx: gsap.Context;
-  let windowWidth = window.innerWidth; // Guardamos el ancho inicial
+  let animCtx: gsap.Context;
+  let windowWidth = window.innerWidth;
+
+  // Método 2: Cálculo dinámico de delta centro a centro y escala
+  const getTargetMetrics = (targetSelector: string) => {
+    const origin = document.querySelector(".container.initial");
+    const target = document.querySelector(targetSelector);
+    if (!origin || !target) return { x: 0, y: 0, scale: 1 };
+
+    const originRect = origin.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    // Centros absolutos respecto al viewport actual
+    const originCenterX = originRect.left + originRect.width / 2;
+    const originCenterY = originRect.top + originRect.height / 2;
+
+    const targetCenterX = targetRect.left + targetRect.width / 2;
+    const targetCenterY = targetRect.top + targetRect.height / 2;
+
+    return {
+      x: targetCenterX - originCenterX,
+      y: targetCenterY - originCenterY,
+      scale: targetRect.width / originRect.width,
+    };
+  };
 
   const initAnimations = () => {
-    // Si ya existe un contexto activo, lo revertimos limpiamente
-    if (flipCtx) flipCtx.revert();
+    if (animCtx) animCtx.revert();
 
-    flipCtx = gsap.context(() => {
-      // 1. Tomamos los estados de destino de cada sección
-      const secondState = Flip.getState(".second .marker");
-      const thirdState = Flip.getState(".third .marker");
-      const fourthState = Flip.getState(".fourth .marker");
+    animCtx = gsap.context(() => {
+      // Punto de anclaje de rotación y escala al centro
+      gsap.set(".box", { transformOrigin: "center center" });
 
-      // 2. Timeline atada al scroll general
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: "#hero",
           start: "top top",
           endTrigger: "#contact",
           end: "bottom bottom",
-          scrub: 0.5,
-          invalidateOnRefresh: true, 
-        }
+          scrub: 0.6,
+          invalidateOnRefresh: true, // Recalcula las funciones flecha en cada resize
+        },
       });
 
-      // 3. Secuencia de paradas y metamorfosis
-
       // PARADA 1: Viaje hacia "Sobre mí" -> Cuadrado redondeado
-      tl.add(Flip.fit(".box", secondState, { ease: "none", duration: 1 }) as any)
-        .to(".box", { 
-          borderColor: "#c98a2c", 
-          backgroundColor: "#c98a2c", 
-          borderWidth: "0px",        
-          borderRadius: "25%",        
-          rotation: 90,
-          duration: 1, 
-          ease: "none" 
-        }, "<")
+      tl.to(".box", {
+        x: () => getTargetMetrics(".second .marker").x,
+        y: () => getTargetMetrics(".second .marker").y,
+        scale: () => getTargetMetrics(".second .marker").scale,
+        borderColor: "#c98a2c",
+        backgroundColor: "#c98a2c",
+        borderWidth: "0px",
+        borderRadius: "25%",
+        rotation: 90,
+        duration: 1.2,
+        ease: "power1.inOut",
+      })
+      // Pausa de lectura en Sobre Mí
+      .to({}, { duration: 0.6 })
 
       // PARADA 2: Viaje hacia "Proyectos" -> Rombo afilado
-      tl.add(Flip.fit(".box", thirdState, { ease: "none", duration: 1 }) as any, "+=0.3")
-        .to(".box", { 
-          backgroundColor: "#faf18b", 
-          borderRadius: "0%",        
-          rotation: 45,              
-          duration: 1, 
-          ease: "none" 
-        }, "<")
+      .to(".box", {
+        x: () => getTargetMetrics(".third .marker").x,
+        y: () => getTargetMetrics(".third .marker").y,
+        scale: () => getTargetMetrics(".third .marker").scale,
+        backgroundColor: "#faf18b",
+        borderRadius: "0%",
+        rotation: 45,
+        duration: 1.2,
+        ease: "power1.inOut",
+      })
+      // Pausa de exploración en Proyectos
+      .to({}, { duration: 1 })
 
       // PARADA 3: Viaje hacia "Contacto" -> Círculo sólido
-      tl.add(Flip.fit(".box", fourthState, { ease: "none", duration: 1 }) as any, "+=0.3")
-        .to(".box", { 
-          backgroundColor: "#344c5c", 
-          borderRadius: "50%",        
-          rotation: 0, 
-          duration: 1, 
-          ease: "none" 
-        }, "<");
+      .to(".box", {
+        x: () => getTargetMetrics(".fourth .marker").x,
+        y: () => getTargetMetrics(".fourth .marker").y,
+        scale: () => getTargetMetrics(".fourth .marker").scale,
+        backgroundColor: "#344c5c",
+        borderRadius: "50%",
+        rotation: 0,
+        duration: 1.2,
+        ease: "power1.inOut",
+      });
     });
   };
 
-  // Inicialización segura: Esperamos a que termine el Hero y carguen las fuentes
+  // Inicialización tras finalizar la intro
   window.addEventListener("introTerminada", () => {
     document.fonts.ready.then(() => {
       ScrollTrigger.refresh();
@@ -101,10 +127,9 @@ import Footer from '../components/Footer.astro';
     });
   });
 
-  // Debounce inteligente para redimensionado
+  // Recálculo ante cambios de ancho (rotación de pantalla o resize)
   let resizeTimer: ReturnType<typeof setTimeout>;
   window.addEventListener("resize", () => {
-    // SOLO recalculamos si cambió el ancho (ignora los saltos de la barra en mobile)
     if (window.innerWidth !== windowWidth) {
       windowWidth = window.innerWidth;
       clearTimeout(resizeTimer);

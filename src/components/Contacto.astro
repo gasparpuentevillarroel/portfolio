@@ -4,7 +4,7 @@ import CardContact from './ContactCard.astro';
 
 <section id="contact">
   <div class="contact-wrapper">
-    <!-- Marcador de la "o" para GSAP Flip -->
+    <!-- Marcador de la "o" -->
     <div class="contact-anchor">
       <div class="container fourth">
         <div class="marker"></div>
@@ -32,19 +32,18 @@ import CardContact from './ContactCard.astro';
 
   .contact-wrapper {
     width: 100%;
-    max-width: 1000px; /* Ajustado para centrar mejor el conjunto */
+    max-width: 1000px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5rem; /* Separación clara y fija */
+    gap: 5rem;
   }
 
-  /* Contenedor estricto para que la "o" NUNCA se aplaste ni se superponga */
   .contact-anchor {
     width: 160px;
     height: 160px;
-    flex-shrink: 0; /* CLAVE: Fuerza a que el ancla respete sus 160px siempre */
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,22 +57,19 @@ import CardContact from './ContactCard.astro';
     justify-content: center;
   }
 
-  /* Coincide con las proporciones de las secciones anteriores */
   .marker {
     width: 140px; 
     height: 140px;
     border-radius: 50%;
   }
 
-  /* Contenedor de la tarjeta */
   .card-container {
     flex: 1;
     max-width: 680px;
-    min-width: 0; /* Evita desbordamientos de flexbox */
+    min-width: 0;
     display: flex;
   }
 
-  /* Responsive: Apilamos antes de que falte espacio (960px en lugar de 860px) */
   @media (max-width: 960px) {
     .contact-wrapper {
       flex-direction: column;
@@ -96,7 +92,6 @@ import CardContact from './ContactCard.astro';
     }
   }
 
-  /* Ajustes finales para móvil */
   @media (max-width: 640px) {
     section {
       padding: 4rem 1.25rem;
